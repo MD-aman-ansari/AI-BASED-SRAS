@@ -128,13 +128,13 @@ npm --prefix frontend install
 ### Step 2: Environment Configuration
 Copy `frontend/.env.example` to `frontend/.env` and verify your Firebase project credentials:
 ```env
-VITE_FIREBASE_API_KEY="AIzaSyAKKoqDrlvY1NRLnh6LRtf5kNqhUbUBBgY"
-VITE_FIREBASE_AUTH_DOMAIN="sfras-1b538.firebaseapp.com"
-VITE_FIREBASE_PROJECT_ID="sfras-1b538"
-VITE_FIREBASE_APP_ID="1:850062847943:web:d59e1a86ac4874fe0fb3e2"
-VITE_FIREBASE_STORAGE_BUCKET="sfras-1b538.firebasestorage.app"
-VITE_FIREBASE_MESSAGING_SENDER_ID="850062847943"
-VITE_FIREBASE_FUNCTIONS_REGION="us-central1"
+VITE_FIREBASE_API_KEY=""
+VITE_FIREBASE_AUTH_DOMAIN=""
+VITE_FIREBASE_PROJECT_ID=""
+VITE_FIREBASE_APP_ID=""
+VITE_FIREBASE_STORAGE_BUCKET=""
+VITE_FIREBASE_MESSAGING_SENDER_ID=""
+VITE_FIREBASE_FUNCTIONS_REGION=""
 ```
 
 ### Step 3: Run the Development Server
@@ -150,8 +150,8 @@ To grant an account administrator access:
 ```powershell
 cd backend/firebase/scripts
 npm install
-$env:FIREBASE_PROJECT_ID = "sfras-1b538"
-$env:FIREBASE_ADMIN_EMAIL = "your-email@company.com"
+$env:FIREBASE_PROJECT_ID = ""
+$env:FIREBASE_ADMIN_EMAIL = ""
 npm run set-admin
 ```
 
