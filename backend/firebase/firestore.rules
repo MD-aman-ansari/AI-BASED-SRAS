@@ -1,0 +1,64 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn() && (
+        request.auth.token.admin == true ||
+        (exists(/databases/$(database)/documents/profiles/$(request.auth.uid)) &&
+         get(/databases/$(database)/documents/profiles/$(request.auth.uid)).data.role == "admin")
+      );
+    }
+
+    // Profiles: users can read their own or other profiles, but CANNOT self-escalate to admin
+    match /profiles/{userId} {
+      allow read: if signedIn();
+      allow create: if signedIn() && (
+        (request.auth.uid == userId && (!('role' in request.resource.data) || request.resource.data.role != "admin")) ||
+        isAdmin()
+      );
+      allow update: if signedIn() && (
+        (request.auth.uid == userId && (
+          (!('role' in request.resource.data) || request.resource.data.role == resource.data.role) &&
+          (!('role' in resource.data) || resource.data.role != "admin" || request.resource.data.role == "admin")
+        )) ||
+        isAdmin()
+      );
+      allow delete: if isAdmin();
+    }
+
+    // Counters and uniqueness tracking documents
+    match /counters/{document=**} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    match /resource_keys/{document=**} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    // Factory resource and operations collections
+    match /{collection}/{document=**} {
+      allow read: if signedIn() && collection in [
+        "employees",
+        "machines",
+        "materials",
+        "production_tasks",
+        "resource_allocations",
+        "production_records",
+        "notifications",
+        "factory_settings"
+      ];
+      allow write: if isAdmin();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
